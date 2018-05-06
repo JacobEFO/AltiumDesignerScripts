@@ -29,8 +29,19 @@ function DateToday(today){
 	return today
 }
 
-function GetParameters(Parameter){
-	
+function GetParameters(Parameter, ParamIterator){
+	result = [];
+
+	while(Parameter != null){
+		if(Parameter.Name == "Comment"){
+			// Do nothing
+		}else{
+			result.push(Parameter.Name);
+		}
+	Parameter = ParamIterator.NextSchObject;
+	}
+
+	return result;
 }
 
 function Main(){
@@ -76,16 +87,13 @@ function Main(){
 		ParamIterator.AddFilter_ObjectSet(MkSet(eParameter));
 
 		Parameter = ParamIterator.FirstSchObject;
+		if(Parameter == null){
+			ShowMessage("Parameter is null atm")
+		}
 
 		// Cycle through and find the current parameters
-		while(Parameter != null){
-			if(Parameter.Name == "Comment"){
-				// Do nothing
-			}else{
-				result.push(Parameter.Name);
-			}
-			Parameter = ParamIterator.NextSchObject;
-		}
+		result = GetParameters(Parameter, ParamIterator);
+		ShowMessage(result.toString());
 		
 		// Calculate the missing parameters
 		loop1: for(var i = 0; i < ParamArray.length; i++){
