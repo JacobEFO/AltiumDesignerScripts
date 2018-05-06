@@ -11,35 +11,53 @@
 //..............................................................................
 
 //..............................................................................
-function FetchParameter(){
+function DateToday(today){
+	// today = new Date();
+	dd = today.getDate();
+	mm = today.getMonth()+1; //January is 0!
+	yyyy = today.getFullYear();
+	
+	if(dd < 10){
+	    dd = '0' + dd
+	} 
+
+	if(mm<10) {
+	    mm = '0' + mm
+	} 
+
+	today = yyyy + "-" + mm + "-" + dd;
+	return today
 }
 
-function SetParameter(){
+function GetParameters(Parameter){
+	
 }
 
 function Main(){
 	var CurrentSheet, Component, Iterator, ParamIterator, Parameter;
 	var ParamArray // Array of the desired parameters
-	var ToAdd // Array of the missing parameters
+	var result // Array of currently defined parameters
 
-	var tmp, result, counter, greatloopcounter;
+	var today, dd, mm, yyyy // Vars for date handling
+
+	today = new Date();
+	today = DateToday(today);
 
 	// Parameters to insert to component
 	ParamArray = [
 		["Manufacturer", ""],
-		["Manufacturer Part NUmber", ""],
+		["Manufacturer Part Number", ""],
 		["Farnell Part Number", ""],
 		["Digikey Part Number", ""],
 		["Mouser Part Number", ""],
 		["RSonline Part Number", ""],
-		["LatestRevisionNote", ""],
-		["LatestRevisionDate", ""],
+		["LatestRevisionNote", "Creation"],
+		["LatestRevisionDate", today],
 		["Footprint", "=CurrentFootprint"],
-		["Published", ""],
-		["Publisher", ""],
+		["Published", today],
+		["Publisher", "JEO"],
 		["PackageDescription", ""]
 	];
-	Toadd = [];
 
 	if(SchServer == null){ return; }
 
@@ -62,66 +80,31 @@ function Main(){
 		// Cycle through and find the current parameters
 		while(Parameter != null){
 			if(Parameter.Name == "Comment"){
-				
+				// Do nothing
 			}else{
 				result.push(Parameter.Name);
 			}
 			Parameter = ParamIterator.NextSchObject;
 		}
-
-		Parameter = ParamIterator.FirstSchObject;
-		if(Parameter == null){
-			ShowMessage("NULL PARAMETER");
-		}else{
-			ShowMessage("We are not null here");
-		}
-		// Parameter.Name = "Test parameter";
 		
 		// Calculate the missing parameters
-		counter = 0;
-		greatloopcounter = 0;
 		loop1: for(var i = 0; i < ParamArray.length; i++){
 			loop2: for(var j = 0; j < result.length; j++){
 				if(ParamArray[i][0] == result[j]){
 					j = 0;
 					break loop2;
-				}else{
-					counter += 1;
 				}
 				if(j == (result.length - 1)){
-					// ShowMessage("j is result length - 1")
-					// greatloopcounter += 1
-					Parameter.Name = "LatestRevisionDate"
-					// Parameter.Name = ParamArray[i][0];
-					// Parameter = ParamIterator.NextSchObject;
+					Parameter = SchServer.SchObjectFactory(eParameter, eCreate_Default);
+					Parameter.Name = ParamArray[i][0];
+					Parameter.Text = ParamArray[i][1];
+					Component.AddSchObject(Parameter)
 				}
 			}
-
 		}
-		ShowMessage("length of result " + result.length + "i is:" + i + "counter is " + counter + "greatloopcounter is " + greatloopcounter);
-
-
-		// Parameter = ParamIterator.FirstSchObject;
-
-		// Insert the missing parametrs
-		// while(Parameter != null){
-		// 	if(Parameter.Name == "Comment"){
-		// 	}else{
-		// 		result.push(Parameter.Name);
-		// 	}
-		// 	Parameter = ParamIterator.NextSchObject;
-		// }
-
 	}else{
 		ShowMessage("Oops something went wrong. Seems like Component is NULL")
 	}
-	tmp = "";
-
-	// for (var i = 0; i < result.length; i++){
-	// 	tmp += result[i].toString() + "\n";
-	// }
-
-	// ShowMessage(tmp);
 
 	Component.SchIterator_Destroy(ParamIterator)
 	CurrentSheet.SchIterator_Destroy(Iterator);
