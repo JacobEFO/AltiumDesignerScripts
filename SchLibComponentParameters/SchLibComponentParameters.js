@@ -1,16 +1,32 @@
 //..............................................................................
 // 
-// Author: Jacob E. Overgaard
-// Email: jacob.overgaard.andersen@gmail.com
+// Author: 	Jacob E. Overgaard
+// Email: 	jacob.overgaard.andersen@gmail.com
+//
+//
 //
 // Description: 
+// 			
+//			This script adds an array of parameters defined in ParamArray
+//			By default the parameters are set to be hidden, this can be changed
+//			by assesing Parameter.IsHidden = false;
+// 			
+//			
+// Use:
 //
+//			In Altium Designer make your custom drop-down menu in library view,
+//			mine is called "Scripts".
+//			Under scripts add the function:
+// 				SchLibComponentParameters.js with Main
 //
+//			Mark your component in the component library and press:
+//				SchLibComponentParameters.js > Main
 //
-// 
 //..............................................................................
 
 //..............................................................................
+
+// Returns today's date in yyyy-mm-dd format
 function DateToday(today){
 	dd = today.getDate();
 	mm = today.getMonth()+1; //January is 0!
@@ -24,10 +40,11 @@ function DateToday(today){
 	    mm = '0' + mm
 	} 
 
-	today = yyyy + "-" + mm + "-" + dd;
-	return today
+	return today = yyyy + "-" + mm + "-" + dd;
 }
 
+// Fetches all existing parameters
+// Note the "Comment" field counts as a parameter
 function GetParameters(Parameter, ParamIterator){
 	result = [];
 
@@ -47,7 +64,7 @@ function Main(){
 	var today, dd, mm, yyyy // Vars for date handling
 
 	today = new Date();
-	today = DateToday(today);
+	today = DateToday(today); // yyyy-mm-dd format
 
 	// Parameters to insert to component
 	ParamArray = [
@@ -83,17 +100,16 @@ function Main(){
 
 		Parameter = ParamIterator.FirstSchObject;
 		if(Parameter == null){
-			ShowMessage("Parameter is null atm")
+			ShowMessage("Parameter is null")
 		}
 
 		// Cycle through and find the current parameters
 		result = GetParameters(Parameter, ParamIterator);
-		// ShowMessage(result.toString());
 		
-		// Calculate the missing parameters
+		// Calculate the missing parameters and insert them
 		loop1: for(var i = 0; i < ParamArray.length; i++){
 			loop2: for(var j = 0; j < result.length; j++){
-				if(ParamArray[i][0] == result[j]){
+				if(ParamArray[i][0] == result[j]){ // Parameter already exists
 					j = 0;
 					break loop2;
 				}
@@ -101,6 +117,7 @@ function Main(){
 					Parameter = SchServer.SchObjectFactory(eParameter, eCreate_Default);
 					Parameter.Name = ParamArray[i][0];
 					Parameter.Text = ParamArray[i][1];
+					Parameter.IsHidden = true;
 					Component.AddSchObject(Parameter)
 				}
 			}
