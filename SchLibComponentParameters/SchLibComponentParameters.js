@@ -12,7 +12,6 @@
 
 //..............................................................................
 function DateToday(today){
-	// today = new Date();
 	dd = today.getDate();
 	mm = today.getMonth()+1; //January is 0!
 	yyyy = today.getFullYear();
@@ -33,12 +32,8 @@ function GetParameters(Parameter, ParamIterator){
 	result = [];
 
 	while(Parameter != null){
-		if(Parameter.Name == "Comment"){
-			// Do nothing
-		}else{
-			result.push(Parameter.Name);
-		}
-	Parameter = ParamIterator.NextSchObject;
+		result.push(Parameter.Name);
+		Parameter = ParamIterator.NextSchObject;
 	}
 
 	return result;
@@ -93,7 +88,7 @@ function Main(){
 
 		// Cycle through and find the current parameters
 		result = GetParameters(Parameter, ParamIterator);
-		ShowMessage(result.toString());
+		// ShowMessage(result.toString());
 		
 		// Calculate the missing parameters
 		loop1: for(var i = 0; i < ParamArray.length; i++){
@@ -117,4 +112,3 @@ function Main(){
 	Component.SchIterator_Destroy(ParamIterator)
 	CurrentSheet.SchIterator_Destroy(Iterator);
 }
-
