@@ -50,7 +50,7 @@ begin
         end;
         projOutput  := Workspace.DM_GetOutputJobDocumentByPath(projDocument.DM_FullPath);
 
-        for i := 1 to (projOutput.OutputMediumCount - 1) do
+        for i := 0 to (projOutput.OutputMediumCount - 1) do
         begin
             if (projOutput.OutputMedium(i).TypeString = 'PDF') then
             begin
@@ -77,6 +77,5 @@ begin
         end;
     end;
   end;
-
 end;
 
